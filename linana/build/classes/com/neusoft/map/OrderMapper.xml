@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    <mapper namespace="com.neusoft.entity.UserOrder">
+   <insert id="addOrder" parameterType="order" keyColumn="id">
+  insert into userorder(order_no,user_id,shipping_id,payment,payment_type,postage,status,create_time,update_time)
+   values(#{order_no},#{user_id},#{shipping_id},#{payment},#{payment_type},#{postage},#{status},now(),now())
+   </insert>
+   
+   <select id="findTotalPage" parameterType="int" resultType="int">
+   select count(id) from userorder where user_id=#{userid}
+   
+   </select>
+   
+   
+   <resultMap type="order" id="order_user" autoMapping="true">
+   <id column="id" property="id"/>
+   <association property="user" column="id" javaType="user" autoMapping="true">
+   <id column="id" property="id"/>
+   </association>
+   <association property="address" column="id" javaType="address" autoMapping="true">
+    <id column="id" property="id"/>
+   </association>
+   </resultMap>
+   <select id="findOrderByPage" parameterType="map" resultMap="order_user">
+   select uo.id,uo.order_no,u.username,a.receiver_province,a.receiver_city,uo.payment,uo.payment_type,uo.postage,uo.status,uo.payment_time,
+  uo.send_time,uo.end_time,uo.close_time,uo.create_time,uo.update_time 
+   from userorder uo
+   left join user u
+   on uo.user_id=u.id
+   left join address a
+   on uo.shipping_id=a.id
+   where uo.user_id=#{userid}  limit #{offset},#{pageSize}
+   
+   </select>
+   <resultMap id="order_item_mapping" type="order" autoMapping="true">
+   <id column="id" property="id"/>
+   <collection property="orderitems" javaType="list" ofType="orderitem" column="order_no" autoMapping="true"> 
+   <id column="item_id" property="id"/> 
+   </collection>
+   </resultMap>
+   
+   
+   <select id="findUserOrderDetailByOrderNo" parameterType="long" resultMap="order_item_mapping">
+  select uo.id,uo.order_no,uo.payment,uo.create_time,
+ i.item_id, i.product_name,i.product_image,i.current_unit_price,i.quantity,i.total_price,i.create_time
+  from userorder uo
+  left join orderitem i
+  on uo.order_no=i.order_no
+  where uo.order_no=#{orderno}
+  
+   </select>
+   <update id="updateOrderStatusByOrderNo" parameterType="map">
+   <!-- update userorder set status=0 where order_no=#{orderno}  -->
+   update userorder set status=#{status} where order_no=#{orderno} 
+   </update>
+    </mapper>

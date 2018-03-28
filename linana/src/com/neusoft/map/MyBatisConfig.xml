@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+    PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+<!-- 加载jdbc.properties文件 -->
+<properties resource="jdbc.properties"/>
+<!-- 别名 -->
+<typeAliases>
+<typeAlias type="com.neusoft.entity.User" alias="user"/>
+<typeAlias type="com.neusoft.entity.Cart" alias="cart"/>
+<typeAlias type="com.neusoft.entity.Address" alias="address"/>
+<typeAlias type="com.neusoft.entity.Product" alias="product"/>
+<typeAlias type="com.neusoft.entity.UserOrder" alias="order"/>
+<typeAlias type="com.neusoft.entity.OrderItem" alias="orderItem"/>
+</typeAliases>
+  <environments default="development">
+    <environment id="development">
+      <transactionManager type="JDBC">
+      </transactionManager>
+      <dataSource type="POOLED">
+        <property name="driver" value="${driver}"/>
+        <property name="url" value="${url}"/>
+        <property name="username" value="${user}"/>
+        <property name="password" value="${password}"/>
+      </dataSource>
+    </environment>
+  </environments>
+
+  <mappers>
+	    <mapper resource="com/neusoft/map/userMapper.xml"/>	   
+	    <mapper resource="com/neusoft/map/cartMapper.xml"/> 
+	      <mapper resource="com/neusoft/map/addressMapper.xml"/> 
+	       <mapper resource="com/neusoft/map/productMapper.xml"/> 
+	        <mapper resource="com/neusoft/map/OrderMapper.xml"/>
+	         <mapper resource="com/neusoft/map/orderitemMapper.xml"/>
+  </mappers>
+
+</configuration>

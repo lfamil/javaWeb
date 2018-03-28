@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <mapper namespace="com.neusoft.entity.OrderItem">
+
+
+ <!--批量插入  -->
+  <insert id="addBatch" parameterType="list" keyColumn="id" keyProperty="id" useGeneratedKeys="true">
+  insert into orderItem(order_no,user_id,product_id,product_name,product_image,current_unit_price,quantity,total_price, create_time,update_time) values
+   <foreach collection="list" item="orderItem" separator=",">
+ (#{orderItem.order_no}, #{orderItem.user_id},#{orderItem.product_id},#{orderItem.product_name}, #{orderItem.product_image}, #{orderItem.current_unit_price}, #{orderItem.quantity}, #{orderItem.total_price}, now(),now())
+  </foreach>
+  </insert>
+  <!--获取订单的商品信息  -->
+  <resultMap type="orderitem" id="item_user" autoMapping="true">
+   <id column="id" property="id"/>
+   <association property="user" column="id" javaType="user" autoMapping="true">
+   <id column="id" property="id"/>
+   </association>
+  </resultMap>
+  
+  <select id="findOrderItemByOrderNo"  parameterType="long" resultMap="item_user">
+  select o.order_no,o.user_id,o.product_name,o.product_image,o.current_unit_price,
+  o.quantity,o.total_price,o.create_time,o.update_time,u.username   
+  from orderitem o
+  left join user u  on o.user_id=u.id
+  where o.order_no=#{orderno}
+  </select>
+    </mapper>
